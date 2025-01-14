@@ -10,5 +10,6 @@
 	  <ui:WixUI Id="WixUI_InstallDir" InstallDirectory="INSTALLFOLDER" />
 	  <WixVariable Id="WixUILicenseRtf" Value="$(EmailDeleter.ProjectDir)\license.rtf" />
 	  <Property Id="ARPPRODUCTICON" Value="EmailDeleter.ico" />
+
   </Package>
 </Wix>

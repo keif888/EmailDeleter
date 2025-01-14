@@ -1,6 +1,10 @@
 # Email Deleter
 
-Download [here](https://github.com/keif888/EmailDeleter/releases)
+[How to use](https://github.com/keif888/EmailDeleter/wiki)  
+
+Download [here](https://github.com/keif888/EmailDeleter/releases)  
+.NET Desktop Runtime 8 is required for this application, and can be downloaded [Download .NET 8.0](https://dotnet.microsoft.com/en-us/download/dotnet/8.0#:~:text=Arm64-,.NET%20Desktop%20Runtime%208.0.11,-The%20.NET%20Desktop)  
+If you don't install it, the 1st execution of Email Deleter will prompt you with the direct download link.  
 
 ## Project Description
 
