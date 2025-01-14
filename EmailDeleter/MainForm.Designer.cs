@@ -34,9 +34,12 @@
             folderToolStripMenuItem = new ToolStripMenuItem();
             searchToolStripMenuItem = new ToolStripMenuItem();
             deleteToolStripMenuItem = new ToolStripMenuItem();
+            cancelToolStripMenuItem = new ToolStripMenuItem();
             exitToolStripMenuItem = new ToolStripMenuItem();
             statusStrip1 = new StatusStrip();
             tsslStatus = new ToolStripStatusLabel();
+            tsRecords = new ToolStripStatusLabel();
+            tsProgress = new ToolStripProgressBar();
             lvEmails = new ListView();
             chDate = new ColumnHeader();
             chFrom = new ColumnHeader();
@@ -48,7 +51,7 @@
             // 
             // menuStrip1
             // 
-            menuStrip1.Items.AddRange(new ToolStripItem[] { connectToolStripMenuItem, findToolStripMenuItem, deleteToolStripMenuItem, exitToolStripMenuItem });
+            menuStrip1.Items.AddRange(new ToolStripItem[] { connectToolStripMenuItem, findToolStripMenuItem, deleteToolStripMenuItem, cancelToolStripMenuItem, exitToolStripMenuItem });
             menuStrip1.Location = new Point(0, 0);
             menuStrip1.Name = "menuStrip1";
             menuStrip1.Size = new Size(1084, 24);
@@ -73,7 +76,7 @@
             // folderToolStripMenuItem
             // 
             folderToolStripMenuItem.Name = "folderToolStripMenuItem";
-            folderToolStripMenuItem.Size = new Size(180, 22);
+            folderToolStripMenuItem.Size = new Size(109, 22);
             folderToolStripMenuItem.Text = "F&older";
             folderToolStripMenuItem.Click += folderToolStripMenuItem_Click;
             // 
@@ -81,7 +84,7 @@
             // 
             searchToolStripMenuItem.Enabled = false;
             searchToolStripMenuItem.Name = "searchToolStripMenuItem";
-            searchToolStripMenuItem.Size = new Size(180, 22);
+            searchToolStripMenuItem.Size = new Size(109, 22);
             searchToolStripMenuItem.Text = "&Search";
             searchToolStripMenuItem.Click += searchToolStripMenuItem_Click;
             // 
@@ -93,6 +96,14 @@
             deleteToolStripMenuItem.Text = "&Delete";
             deleteToolStripMenuItem.Click += deleteToolStripMenuItem_Click;
             // 
+            // cancelToolStripMenuItem
+            // 
+            cancelToolStripMenuItem.Enabled = false;
+            cancelToolStripMenuItem.Name = "cancelToolStripMenuItem";
+            cancelToolStripMenuItem.Size = new Size(55, 20);
+            cancelToolStripMenuItem.Text = "C&ancel";
+            cancelToolStripMenuItem.Click += cancelToolStripMenuItem_Click;
+            // 
             // exitToolStripMenuItem
             // 
             exitToolStripMenuItem.Name = "exitToolStripMenuItem";
@@ -102,7 +113,7 @@
             // 
             // statusStrip1
             // 
-            statusStrip1.Items.AddRange(new ToolStripItem[] { tsslStatus });
+            statusStrip1.Items.AddRange(new ToolStripItem[] { tsslStatus, tsRecords, tsProgress });
             statusStrip1.Location = new Point(0, 428);
             statusStrip1.Name = "statusStrip1";
             statusStrip1.Size = new Size(1084, 22);
@@ -115,16 +126,31 @@
             tsslStatus.Size = new Size(79, 17);
             tsslStatus.Text = "Disconnected";
             // 
+            // tsRecords
+            // 
+            tsRecords.Name = "tsRecords";
+            tsRecords.Padding = new Padding(20, 0, 0, 0);
+            tsRecords.Size = new Size(177, 17);
+            tsRecords.Text = "0 Records Listed for Deletion";
+            // 
+            // tsProgress
+            // 
+            tsProgress.Name = "tsProgress";
+            tsProgress.Padding = new Padding(20, 0, 0, 0);
+            tsProgress.Size = new Size(120, 16);
+            // 
             // lvEmails
             // 
             lvEmails.Columns.AddRange(new ColumnHeader[] { chDate, chFrom, chTo, chSubject });
             lvEmails.Dock = DockStyle.Fill;
+            lvEmails.FullRowSelect = true;
             lvEmails.Location = new Point(0, 24);
             lvEmails.Name = "lvEmails";
             lvEmails.Size = new Size(1084, 404);
             lvEmails.TabIndex = 2;
             lvEmails.UseCompatibleStateImageBehavior = false;
             lvEmails.View = View.Details;
+            lvEmails.KeyDown += lvEmails_KeyDown;
             // 
             // chDate
             // 
@@ -182,5 +208,8 @@
         private ColumnHeader chSubject;
         private ToolStripMenuItem folderToolStripMenuItem;
         private ToolStripMenuItem searchToolStripMenuItem;
+        private ToolStripProgressBar tsProgress;
+        private ToolStripStatusLabel tsRecords;
+        private ToolStripMenuItem cancelToolStripMenuItem;
     }
 }

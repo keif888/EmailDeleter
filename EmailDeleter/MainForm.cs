@@ -14,6 +14,7 @@ using Microsoft.Identity.Client;
 
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 using System.Runtime.CompilerServices;
+using System.ComponentModel;
 
 namespace EmailDeleter
 {
@@ -31,6 +32,7 @@ namespace EmailDeleter
         private static IMailFolder? folder;
         private static ImapClient client = new ImapClient();
         private static bool connected = false;
+        private static CancellationTokenSource tokenSource = new CancellationTokenSource();
 
         public MainForm()
         {
@@ -58,20 +60,28 @@ namespace EmailDeleter
 
                 client.Connect(IMAPServer, IMAPPort, UseSSL);
                 username = emailAddress;
-                if (LogonUsing == "Outlook OAUTH")
+                try
                 {
-                    if (client.AuthenticationMechanisms.Contains("OAUTHBEARER") || client.AuthenticationMechanisms.Contains("XOAUTH2"))
-                        await OutlookAuthenticateAsync(client);
+                    if (LogonUsing == "Outlook OAUTH")
+                    {
+                        if (client.AuthenticationMechanisms.Contains("OAUTHBEARER") || client.AuthenticationMechanisms.Contains("XOAUTH2"))
+                            await OutlookAuthenticateAsync(client);
+                    }
+                    //ToDo: Implement Google Authentication
+                    //else if (LogonUsing == "Google OAUTH")
+                    //{
+                    //    if (client.AuthenticationMechanisms.Contains("OAUTHBEARER") || client.AuthenticationMechanisms.Contains("XOAUTH2"))
+                    //        await GoogleAuthenticateAsync(client);
+                    //}
+                    else
+                    {
+                        client.Authenticate(emailAddress, password);
+                    }
                 }
-                //ToDo: Implement Google Authentication
-                //else if (LogonUsing == "Google OAUTH")
-                //{
-                //    if (client.AuthenticationMechanisms.Contains("OAUTHBEARER") || client.AuthenticationMechanisms.Contains("XOAUTH2"))
-                //        await GoogleAuthenticateAsync(client);
-                //}
-                else
+                catch (Exception ex)
                 {
-                    client.Authenticate(emailAddress, password);
+                    MessageBox.Show(ex.Message, "Exception Encountered");
+                    return;
                 }
 
                 connectToolStripMenuItem.Enabled = false;
@@ -148,15 +158,19 @@ namespace EmailDeleter
                         else { query = query.And(SearchQuery.SubjectContains(filterForm.SubjectContains)); }
                     }
 
-                    foreach (var uid in folder.Search(query))
+                    IList<UniqueId> searchIds = folder.Search(query);
+
+                    int searchItems = searchIds.Count, searchProgress = 0;
+
+                    foreach (var uid in searchIds)
                     {
                         var message = folder.GetMessage(uid);
-                        ListViewItem lvItem = new ListViewItem(message.Date.ToString("yyyy-MM-dd hh:mm:ss tt"));
+                        ListViewItem lvItem = lvEmails.Items.Add(uid.ToString(), message.Date.ToString("yyyy-MM-dd hh:mm:ss tt"), 0);
                         lvItem.Tag = uid;
                         lvItem.SubItems.Add(message.From.ToString());
                         lvItem.SubItems.Add(message.To.ToString());
                         lvItem.SubItems.Add(message.Subject);
-                        lvEmails.Items.Add(lvItem);
+                        tsProgress.Value = (++searchProgress * 100) / searchItems;
                     }
 
                     if (lvEmails.Items.Count > 0)
@@ -165,6 +179,7 @@ namespace EmailDeleter
                     }
                     else
                     { deleteToolStripMenuItem.Enabled = false; }
+                    tsRecords.Text = String.Format("{0} Records Listed for Deletion", lvEmails.Items.Count);
                 }
             }
         }
@@ -220,27 +235,79 @@ namespace EmailDeleter
         {
             if (connected)
                 client.Disconnect(true);
+            tokenSource.Dispose();
         }
 
-        private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
+        private async void deleteToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (folder != null && lvEmails.Items.Count > 0)
+            if (lvEmails.Items.Count > 0)
             {
+                MessageBoxButtons button = MessageBoxButtons.YesNo;
+                string message = String.Format("There are {0} items to delete, are you sure?", lvEmails.Items.Count);
+                if (MessageBox.Show(message, "Deletion Starting", button) == DialogResult.Yes)
+                {
+                    cancelToolStripMenuItem.Enabled = true;
+                    List<UniqueId> uniqueIds = new List<UniqueId>();
+                    foreach (ListViewItem item in lvEmails.Items)
+                    {
+                        if (item.Tag != null)
+                            uniqueIds.Add((UniqueId)item.Tag);
+                    }
+                    // Reset the tokenSource
+                    tokenSource.Dispose();
+                    tokenSource = new CancellationTokenSource();
+                    var token = tokenSource.Token;
+
+                    var progress = new Progress<int>(v =>
+                    {
+                        tsProgress.Value = v;
+                    });
+
+                    try
+                    {
+                        await Task.Run(() => ExecuteDelete(token, uniqueIds, progress));
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        MessageBox.Show("Delete Processing Cancelled!");
+                    }
+
+                    tsRecords.Text = String.Format("{0} Records Listed for Deletion", lvEmails.Items.Count);
+                    if (lvEmails.Items.Count == 0)
+                        deleteToolStripMenuItem.Enabled = false;
+                    cancelToolStripMenuItem.Enabled = false;
+                }
+            }
+        }
+
+        private void ExecuteDelete(CancellationToken ct, List<UniqueId> uniqueIds, IProgress<int> progress)
+        {
+            if (folder != null && uniqueIds.Count > 0)
+            {
+                int itemsToProcess = uniqueIds.Count;
                 folder.Close();
                 folder.Open(FolderAccess.ReadWrite);
                 StoreFlagsRequest request = new(StoreAction.Add, MessageFlags.Deleted) { Silent = true };
-                int i = 0;
-                foreach (ListViewItem item in lvEmails.Items)
+                int i = 0, itemsProcessed = 0;
+                foreach (UniqueId item in uniqueIds)
                 {
-                    if (item.Tag != null && item.Tag is UniqueId)
-                    {
-                        folder.Store((UniqueId)item.Tag, request);
-                        i++;
-                    }
+                    //Thread.Sleep(100);
+                    folder.Store(item, request);
+                    DeleteEmailListItem(item.ToString());
+                    i++;
                     if (i >= 10)
                     {
+                        //Thread.Sleep(100);
                         folder.Expunge();
                         i = 0;
+                    }
+                    if (progress != null)
+                        progress.Report((++itemsProcessed) * 100 / itemsToProcess);
+                    if (ct.IsCancellationRequested)
+                    {
+                        folder.Close();
+                        folder.Open(FolderAccess.ReadOnly);
+                        ct.ThrowIfCancellationRequested();
                     }
                 }
                 if (i > 0)
@@ -249,10 +316,42 @@ namespace EmailDeleter
                 }
                 folder.Close();
                 folder.Open(FolderAccess.ReadOnly);
-                lvEmails.Items.Clear();
             }
+            if (progress != null)
+                progress.Report(100);
         }
 
+        private void cancelToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            tokenSource.Cancel();
+            cancelToolStripMenuItem.Enabled = false;
+        }
+
+        private void DeleteEmailListItem(string itemKey)
+        {
+            if (lvEmails.InvokeRequired)
+            {
+                Action safeRemove = delegate { DeleteEmailListItem(itemKey); };
+                lvEmails.Invoke(safeRemove);
+            }
+            else
+                lvEmails.Items.RemoveByKey(itemKey);
+        }
+
+        private void lvEmails_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Delete)
+            {
+                ListView.SelectedListViewItemCollection tobedeleted = this.lvEmails.SelectedItems;
+                lvEmails.BeginUpdate();
+                foreach (ListViewItem item in tobedeleted)
+                {
+                    lvEmails.Items.Remove(item);
+                }
+                lvEmails.EndUpdate();
+                tsRecords.Text = String.Format("{0} Records Listed for Deletion", lvEmails.Items.Count);
+            }
+        }
         //ToDo: Implement Google Authentication
         //private async Task GoogleAuthenticateAsync(ImapClient client)
         //{
