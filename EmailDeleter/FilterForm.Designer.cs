@@ -47,7 +47,7 @@
             // 
             // dtFromDate
             // 
-            dtFromDate.CustomFormat = "dddd ,dd MMMM yyyy, hh:mm:ss tt";
+            dtFromDate.CustomFormat = "yyyy-MM-dd  hh:mm:ss tt";
             dtFromDate.Format = DateTimePickerFormat.Custom;
             dtFromDate.Location = new Point(138, 12);
             dtFromDate.Name = "dtFromDate";
@@ -57,7 +57,7 @@
             // 
             // dtToDate
             // 
-            dtToDate.CustomFormat = "dddd ,dd MMMM yyyy, hh:mm:ss tt";
+            dtToDate.CustomFormat = "yyyy-MM-dd  hh:mm:ss tt";
             dtToDate.Format = DateTimePickerFormat.Custom;
             dtToDate.Location = new Point(138, 41);
             dtToDate.Name = "dtToDate";
