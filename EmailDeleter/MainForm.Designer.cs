@@ -150,6 +150,7 @@
             lvEmails.TabIndex = 2;
             lvEmails.UseCompatibleStateImageBehavior = false;
             lvEmails.View = View.Details;
+            lvEmails.ColumnClick += lvEmails_ColumnClick;
             lvEmails.KeyDown += lvEmails_KeyDown;
             // 
             // chDate

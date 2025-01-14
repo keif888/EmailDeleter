@@ -20,6 +20,8 @@ namespace EmailDeleter
 {
     public partial class MainForm : Form
     {
+        private ListViewColumnSorter lvwColumnSorter;
+
         private string emailAddress = string.Empty;
         private string password = string.Empty;
         private string IMAPServer = string.Empty;
@@ -38,6 +40,8 @@ namespace EmailDeleter
         {
             InitializeComponent();
             hWnd = this.Handle;
+            lvwColumnSorter = new ListViewColumnSorter();
+            this.lvEmails.ListViewItemSorter = lvwColumnSorter;
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -351,6 +355,32 @@ namespace EmailDeleter
                 lvEmails.EndUpdate();
                 tsRecords.Text = String.Format("{0} Records Listed for Deletion", lvEmails.Items.Count);
             }
+        }
+
+        private void lvEmails_ColumnClick(object sender, ColumnClickEventArgs e)
+        {
+            // Determine if clicked column is already the column that is being sorted.
+            if (e.Column == lvwColumnSorter.SortColumn)
+            {
+                // Reverse the current sort direction for this column.
+                if (lvwColumnSorter.Order == System.Windows.Forms.SortOrder.Ascending)
+                {
+                    lvwColumnSorter.Order = System.Windows.Forms.SortOrder.Descending;
+                }
+                else
+                {
+                    lvwColumnSorter.Order = System.Windows.Forms.SortOrder.Ascending;
+                }
+            }
+            else
+            {
+                // Set the column number that is to be sorted; default to ascending.
+                lvwColumnSorter.SortColumn = e.Column;
+                lvwColumnSorter.Order = System.Windows.Forms.SortOrder.Ascending;
+            }
+
+            // Perform the sort with these new sort options.
+            this.lvEmails.Sort();
         }
         //ToDo: Implement Google Authentication
         //private async Task GoogleAuthenticateAsync(ImapClient client)
