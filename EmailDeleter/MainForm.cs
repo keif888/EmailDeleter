@@ -163,6 +163,11 @@ namespace EmailDeleter
                         else { query = query.And(SearchQuery.SubjectContains(filterForm.SubjectContains)); }
                     }
 
+                    if (query == null)
+                    {
+                        query = SearchQuery.All;
+                    }
+
                     IList<UniqueId> searchIds = folder.Search(query);
 
                     int searchItems = searchIds.Count, searchProgress = 0;
