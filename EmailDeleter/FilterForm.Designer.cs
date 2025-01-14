@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FilterForm));
             dtFromDate = new DateTimePicker();
             dtToDate = new DateTimePicker();
             tbFromContains = new TextBox();
@@ -199,6 +200,7 @@
             Controls.Add(dtToDate);
             Controls.Add(dtFromDate);
             FormBorderStyle = FormBorderStyle.FixedDialog;
+            Icon = (Icon)resources.GetObject("$this.Icon");
             MaximizeBox = false;
             MinimizeBox = false;
             Name = "FilterForm";

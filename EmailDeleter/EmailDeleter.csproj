@@ -6,9 +6,29 @@
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
-    <AssemblyVersion>1.0.0.32</AssemblyVersion>
-    <FileVersion>1.0.0.32</FileVersion>
+    <AssemblyVersion>1.0.0.38</AssemblyVersion>
+    <FileVersion>1.0.0.38</FileVersion>
+    <Title>Email Deleter</Title>
+    <Description>Software to allow bulk deletion of emails</Description>
+    <Copyright>keif888 2025</Copyright>
+    <PackageProjectUrl>https://github.com/keif888/EmailDeleter</PackageProjectUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/keif888/EmailDeleter</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <Authors>keif888</Authors>
+    <ApplicationIcon>EmailDeleter.ico</ApplicationIcon>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="EmailDeleter.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="MailKit" Version="4.9.0" />

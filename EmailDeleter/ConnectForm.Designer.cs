@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ConnectForm));
             label1 = new Label();
             tbEmailAddress = new TextBox();
             mbPassword = new MaskedTextBox();
@@ -181,6 +182,7 @@
             Controls.Add(mbPassword);
             Controls.Add(tbEmailAddress);
             Controls.Add(label1);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             MaximizeBox = false;
             MinimizeBox = false;
             Name = "ConnectForm";

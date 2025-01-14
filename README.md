@@ -9,5 +9,10 @@ It will then allow you to delete all the found emails in batches of 10.
 
 ## Known Issues
 
-There is NO error handling in place yet.  
+There is minimal error handling in place.  
 It only works for Basic Authentication or Microsoft Outlook OAUTH2.  Google is mentioned, but it's not enabled.  
+
+## Attribution
+
+[MailKit](https://github.com/jstedfast/MailKit)  
+[Anti icons created by Uniconlabs - Flaticon](https://www.flaticon.com/free-icons/anti)  

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Fragment>
+	  <Icon Id="EmailDeleter.ico" SourceFile="$(EmailDeleter.ProjectDir)\EmailDeleter.ico"/>
+	  <ComponentGroup Id="MainComponents" Directory="INSTALLFOLDER">
+		  <Files Include="$(EmailDeleter.TargetDir)\**">
+			  <Exclude Files="$(EmailDeleter.TargetDir)\EmailDeleter.exe"/>
+		  </Files>
+		  <Component Id="AppExecutable">
+			  <File Id="AppExecutable" Source="EmailDeleter.exe"/>
+			  <Shortcut Name="Email Deleter" Directory="ProgramMenuFolder" Advertise="yes" Icon="EmailDeleter.ico"/>
+		  </Component>
+	  </ComponentGroup>
+  </Fragment>
+</Wix>
