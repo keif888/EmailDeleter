@@ -126,6 +126,7 @@ namespace EmailDeleter
                 FilterForm filterForm = new FilterForm();
                 if (filterForm.ShowDialog() == DialogResult.OK)
                 {
+                    lvEmails.BeginUpdate();
                     lvEmails.Items.Clear();
 
                     //var folder = client.Inbox;
@@ -184,6 +185,7 @@ namespace EmailDeleter
                     else
                     { deleteToolStripMenuItem.Enabled = false; }
                     tsRecords.Text = String.Format("{0} Records Listed for Deletion", lvEmails.Items.Count);
+                    lvEmails.EndUpdate();
                 }
             }
         }
