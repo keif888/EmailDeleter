@@ -6,11 +6,10 @@ using MailKit.Security;
 using MimeKit.Cryptography;
 using Microsoft.Identity.Client;
 
-//ToDo: Implement Google Authentication
-//using Google.Apis.Util;
-//using Google.Apis.Util.Store;
-//using Google.Apis.Auth.OAuth2;
-//using Google.Apis.Auth.OAuth2.Flows;
+using Google.Apis.Util;
+using Google.Apis.Util.Store;
+using Google.Apis.Auth.OAuth2;
+using Google.Apis.Auth.OAuth2.Flows;
 
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 using System.Runtime.CompilerServices;
@@ -71,12 +70,11 @@ namespace EmailDeleter
                         if (client.AuthenticationMechanisms.Contains("OAUTHBEARER") || client.AuthenticationMechanisms.Contains("XOAUTH2"))
                             await OutlookAuthenticateAsync(client);
                     }
-                    //ToDo: Implement Google Authentication
-                    //else if (LogonUsing == "Google OAUTH")
-                    //{
-                    //    if (client.AuthenticationMechanisms.Contains("OAUTHBEARER") || client.AuthenticationMechanisms.Contains("XOAUTH2"))
-                    //        await GoogleAuthenticateAsync(client);
-                    //}
+                    else if (LogonUsing == "Google OAUTH")
+                    {
+                        if (client.AuthenticationMechanisms.Contains("OAUTHBEARER") || client.AuthenticationMechanisms.Contains("XOAUTH2"))
+                            await GoogleAuthenticateAsync(client);
+                    }
                     else
                     {
                         client.Authenticate(emailAddress, password);
@@ -389,42 +387,42 @@ namespace EmailDeleter
             // Perform the sort with these new sort options.
             this.lvEmails.Sort();
         }
-        //ToDo: Implement Google Authentication
-        //private async Task GoogleAuthenticateAsync(ImapClient client)
-        //{
-        //    var clientSecrets = new ClientSecrets
-        //    {
-        //        ClientId = "XXX.apps.googleusercontent.com",
-        //        ClientSecret = "XXX"
-        //    };
 
-        //    var codeFlow = new GoogleAuthorizationCodeFlow(new GoogleAuthorizationCodeFlow.Initializer
-        //    {
-        //        DataStore = new FileDataStore("CredentialCacheFolder", false),
-        //        Scopes = new[] { "https://mail.google.com/" },
-        //        ClientSecrets = clientSecrets
-        //    });
+        private async Task GoogleAuthenticateAsync(ImapClient client)
+        {
+            var clientSecrets = new ClientSecrets
+            {
+                ClientId = "{ClientIdReplaceMeSomehow}",
+                ClientSecret = "{ClientSecretReplaceMeSomehow}"
+            };
 
-        //    // Note: For a web app, you'll want to use AuthorizationCodeWebApp instead.
-        //    var codeReceiver = new LocalServerCodeReceiver();
-        //    var authCode = new AuthorizationCodeInstalledApp(codeFlow, codeReceiver);
+            var codeFlow = new GoogleAuthorizationCodeFlow(new GoogleAuthorizationCodeFlow.Initializer
+            {
+                DataStore = new FileDataStore("CredentialCacheFolder", false),
+                Scopes = new[] { "https://mail.google.com/" },
+                ClientSecrets = clientSecrets
+            });
 
-        //    var credential = await authCode.AuthorizeAsync(GMailAccount, CancellationToken.None);
+            // Note: For a web app, you'll want to use AuthorizationCodeWebApp instead.
+            var codeReceiver = new LocalServerCodeReceiver();
+            var authCode = new AuthorizationCodeInstalledApp(codeFlow, codeReceiver);
 
-        //    if (credential.Token.IsStale)
-        //        await credential.RefreshTokenAsync(CancellationToken.None);
+            var credential = await authCode.AuthorizeAsync(username, CancellationToken.None);
 
-        //    // Note: We use credential.UserId here instead of GMailAccount because the user *may* have chosen a
-        //    // different GMail account when presented with the browser window during the authentication process.
-        //    SaslMechanism oauth2;
+            if (credential.Token.IsStale)
+                await credential.RefreshTokenAsync(CancellationToken.None);
 
-        //    if (client.AuthenticationMechanisms.Contains("OAUTHBEARER"))
-        //        oauth2 = new SaslMechanismOAuthBearer(credential.UserId, credential.Token.AccessToken);
-        //    else
-        //        oauth2 = new SaslMechanismOAuth2(credential.UserId, credential.Token.AccessToken);
+            // Note: We use credential.UserId here instead of GMailAccount because the user *may* have chosen a
+            // different GMail account when presented with the browser window during the authentication process.
+            SaslMechanism oauth2;
 
-        //    await client.AuthenticateAsync(oauth2);
-        //}
+            if (client.AuthenticationMechanisms.Contains("OAUTHBEARER"))
+                oauth2 = new SaslMechanismOAuthBearer(credential.UserId, credential.Token.AccessToken);
+            else
+                oauth2 = new SaslMechanismOAuth2(credential.UserId, credential.Token.AccessToken);
+
+            await client.AuthenticateAsync(oauth2);
+        }
 
     }
 }
