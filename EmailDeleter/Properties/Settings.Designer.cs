@@ -154,5 +154,34 @@ namespace EmailDeleter.Properties {
                 this["BodyContains"] = value;
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Vf9HzUEBJPmZ7w2KiGJocUfgie7VlilgVfbSW5l9g1Q=")]
+        public string AppString1 {
+            get {
+                return ((string)(this["AppString1"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("APFeALg3dJrzKJoxNP/O/hKo3vJ6kQjWG7Mnsf4Wbkz6F6f+NmWufl9EGCYnn8JH8YYxmAJRovNKeuWc5" +
+            "IX7eg==")]
+        public string AppString2 {
+            get {
+                return ((string)(this["AppString2"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("ZInWBH3xESgI8Qga7z4swkyPxwAhMkl57Bkh1TCUPcYeRC9hrcuBD68xGQZDFp/31ZdQpYF0T3GaVXyya" +
+            "SShG+eiBM0AiyVF900k1IP6d5kaZd0AdBz0unPFRNMC3+ij")]
+        public string AppString3 {
+            get {
+                return ((string)(this["AppString3"]));
+            }
+        }
     }
 }
