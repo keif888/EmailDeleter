@@ -14,7 +14,7 @@ It will then allow you to delete all the found emails in batches of 10.
 ## Known Issues
 
 There is minimal error handling in place.  
-It only works for Basic Authentication or Microsoft Outlook OAUTH2.  Google is mentioned, but it's not enabled.  
+It only works for Basic Authentication or Microsoft OAUTH2.  Google is coded, but the app hasn't been submitted for review, so the OAUTH flow will fail right at the end.  
 
 ## Attribution
 
