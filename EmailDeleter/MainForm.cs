@@ -16,6 +16,7 @@ using System.Runtime.CompilerServices;
 using System.ComponentModel;
 using Newtonsoft.Json.Linq;
 using System.Security.Cryptography;
+using System.Threading;
 
 namespace EmailDeleter
 {
@@ -175,6 +176,8 @@ namespace EmailDeleter
                     IList<UniqueId> searchIds = folder.Search(query);
 
                     int searchItems = searchIds.Count, searchProgress = 0;
+                    tsRecords.Text = String.Format("{0} Records Listed for Deletion", searchItems);
+                    statusStrip1.Refresh();
 
                     foreach (var uid in searchIds)
                     {
