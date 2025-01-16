@@ -125,6 +125,10 @@ namespace EmailDeleter
                 if (filterForm.ShowDialog() == DialogResult.OK)
                 {
                     lvEmails.BeginUpdate();
+                    int sortColumn = lvwColumnSorter.SortColumn;
+                    System.Windows.Forms.SortOrder sortOrder = lvwColumnSorter.Order;
+                    lvwColumnSorter.SortColumn = 0;
+                    lvwColumnSorter.Order = System.Windows.Forms.SortOrder.Ascending;
                     lvEmails.Items.Clear();
 
                     //var folder = client.Inbox;
@@ -188,6 +192,9 @@ namespace EmailDeleter
                     else
                     { deleteToolStripMenuItem.Enabled = false; }
                     tsRecords.Text = String.Format("{0} Records Listed for Deletion", lvEmails.Items.Count);
+                    lvwColumnSorter.SortColumn = sortColumn;
+                    lvwColumnSorter.Order = sortOrder;
+                    lvEmails.Sort();
                     lvEmails.EndUpdate();
                 }
             }
