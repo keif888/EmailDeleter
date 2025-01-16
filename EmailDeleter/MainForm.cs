@@ -14,6 +14,8 @@ using Google.Apis.Auth.OAuth2.Flows;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 using System.Runtime.CompilerServices;
 using System.ComponentModel;
+using Newtonsoft.Json.Linq;
+using System.Security.Cryptography;
 
 namespace EmailDeleter
 {
@@ -204,9 +206,8 @@ namespace EmailDeleter
         {
             var options = new PublicClientApplicationOptions
             {
-                ClientId = "d773b4a9-2da2-44c3-8c25-95df82284351", //"Application (client) ID",
-                TenantId = "consumers", //"68d7521a-ae28-46a5-a2e5-bb6e2b6bcea5", //"Directory (tenant) ID",
-                //RedirectUri = "https://login.microsoftonline.com/common/oauth2/nativeclient"
+                ClientId = getProperty(Properties.Settings.Default.AppString4, Properties.Settings.Default.AppString1),
+                TenantId = "consumers",
                 RedirectUri = "http://localhost"
             };
 
@@ -399,8 +400,8 @@ namespace EmailDeleter
         {
             var clientSecrets = new ClientSecrets
             {
-                ClientId = "{ClientIdReplaceMeSomehow}",
-                ClientSecret = "{ClientSecretReplaceMeSomehow}"
+                ClientId = getProperty(Properties.Settings.Default.AppString3, Properties.Settings.Default.AppString1),
+                ClientSecret = getProperty(Properties.Settings.Default.AppString2, Properties.Settings.Default.AppString1)
             };
 
             var codeFlow = new GoogleAuthorizationCodeFlow(new GoogleAuthorizationCodeFlow.Initializer
@@ -429,6 +430,29 @@ namespace EmailDeleter
                 oauth2 = new SaslMechanismOAuth2(credential.UserId, credential.Token.AccessToken);
 
             await client.AuthenticateAsync(oauth2);
+        }
+
+        private string getProperty(string inbound, string theotherone)
+        {
+            byte[] value = Convert.FromBase64String(inbound);
+            using (Aes aes = Aes.Create())
+            {
+                aes.Key = Convert.FromBase64String(theotherone);
+                byte[] iv = new byte[aes.IV.Length];
+                int numBytesToRead = aes.IV.Length, encryptLength = value.Length - aes.IV.Length;
+                Array.Copy(value, 0, iv, 0, numBytesToRead);
+                aes.IV = iv;
+                byte[] encryptedBytes = new byte[encryptLength];
+                Array.Copy(value, numBytesToRead, encryptedBytes, 0, encryptLength);
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    using (CryptoStream cs = new CryptoStream(ms, aes.CreateDecryptor(), CryptoStreamMode.Write))
+                    {
+                        cs.Write(encryptedBytes, 0, encryptedBytes.Length);
+                    }
+                    return System.Text.Encoding.UTF8.GetString(ms.ToArray());
+                }
+            }
         }
 
     }

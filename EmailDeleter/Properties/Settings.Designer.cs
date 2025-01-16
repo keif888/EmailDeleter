@@ -183,5 +183,15 @@ namespace EmailDeleter.Properties {
                 return ((string)(this["AppString3"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("EGcFM094CYRZtJwA5xerVw9G50NN2vT69EfpKdBkiesIrHfhpWSgUE7faQ90hPOhWc0z4EP6QYZLn22wJ" +
+            "Qs7FA==")]
+        public string AppString4 {
+            get {
+                return ((string)(this["AppString4"]));
+            }
+        }
     }
 }
