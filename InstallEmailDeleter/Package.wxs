@@ -1,5 +1,5 @@
 ﻿<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs" xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
-  <Package Name="Email Deleter" Manufacturer="Keif888" Version="1.0.0.0" UpgradeCode="b361bde7-67f2-4023-90eb-c24a70f1f901">
+  <Package Name="Email Deleter" Manufacturer="Keif888" Version="1.1.0.0" UpgradeCode="b361bde7-67f2-4023-90eb-c24a70f1f901">
     <MajorUpgrade DowngradeErrorMessage="!(loc.DowngradeError)" />
 
 	  <Media Id="1" Cabinet="EmailDeleter.cab" EmbedCab="true"/>
